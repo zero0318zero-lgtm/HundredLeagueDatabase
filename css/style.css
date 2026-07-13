@@ -1135,3 +1135,60 @@ body.modal-open{
         align-items:flex-start;
     }
 }
+/* ========================================
+   スマホ表示調整
+======================================== */
+
+@media (max-width: 768px) {
+
+    header h1 {
+      font-size: 32px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+  
+    header p {
+      font-size: 15px;
+    }
+  
+  }
+  @media (max-width: 768px) {
+
+    #teamTable {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+    #teamTable table {
+      min-width: 760px;
+      width: 100%;
+      table-layout: auto;
+    }
+  
+    #teamTable th,
+    #teamTable td {
+      white-space: nowrap;
+      padding: 10px 8px;
+      font-size: 14px;
+    }
+  
+  }
+  @media (max-width: 768px) {
+
+    #teamTable th:nth-child(6),
+    #teamTable td:nth-child(6) {
+      display: none;
+    }
+  
+  }
+  .players-ranking-table th:first-child,
+.players-ranking-table td:first-child {
+  width: 72px;
+  min-width: 72px;
+  text-align: center;
+}
+
+.players-rank-cell {
+  text-align: center;
+  white-space: nowrap;
+}
