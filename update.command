@@ -35,7 +35,7 @@ echo ""
 echo "CSV更新完了"
 echo ""
 
-git add data/teams.csv data/players.csv data/matches.csv data/awards.csv
+git add .
 
 if git diff --cached --quiet; then
   echo "変更はありませんでした。"
