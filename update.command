@@ -12,29 +12,29 @@ echo "========================================"
 echo ""
 
 echo "1/5 teams.csv を更新中..."
-curl --fail --location --max-time 60 \
+curl --http1.1 --fail --location --max-time 120 \
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOdocYk8ObQRgGJj3FCgHlECXxOJ1v0JC5etquS1xGs-j5XU__lfCW5jFOWtQXvLRKQglX_2kYPmHO/pub?gid=1681226504&single=true&output=csv" \
   --output data/teams.csv
 
 echo "2/5 players.csv を更新中..."
-curl --fail --location --max-time 60 \
+curl --http1.1 --fail --location --max-time 120 \
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOdocYk8ObQRgGJj3FCgHlECXxOJ1v0JC5etquS1xGs-j5XU__lfCW5jFOWtQXvLRKQglX_2kYPmHO/pub?gid=1337045347&single=true&output=csv" \
   --output data/players.csv
 
 echo "3/5 matches.csv を更新中..."
-curl --fail --location --max-time 60 \
+curl --http1.1 --fail --location --max-time 120 \
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOdocYk8ObQRgGJj3FCgHlECXxOJ1v0JC5etquS1xGs-j5XU__lfCW5jFOWtQXvLRKQglX_2kYPmHO/pub?gid=1561387699&single=true&output=csv" \
   --output data/matches.csv
 
 echo "4/5 awards.csv を更新中..."
-curl --fail --location --max-time 60 \
+curl --http1.1 --fail --location --max-time 120 \
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOdocYk8ObQRgGJj3FCgHlECXxOJ1v0JC5etquS1xGs-j5XU__lfCW5jFOWtQXvLRKQglX_2kYPmHO/pub?gid=869325336&single=true&output=csv" \
   --output data/awards.csv
 
-  echo "5/5 playerAlias.csv を更新中..."
-curl --fail --location --max-time 60 \
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vQOdocYk8ObQRgGJj3FCgHlECXxOJ1v0JC5etquS1xGs-j5XU__lfCW5jFOWtQXvLRKQglX_2kYPmHO/pub?gid=614293799&single=true&output=csv" \
---output data/playerAlias.csv
+echo "5/5 playerAlias.csv を更新中..."
+curl --http1.1 --fail --location --max-time 120 \
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQOdocYk8ObQRgGJj3FCgHlECXxOJ1v0JC5etquS1xGs-j5XU__lfCW5jFOWtQXvLRKQglX_2kYPmHO/pub?gid=614293799&single=true&output=csv" \
+  --output data/playerAlias.csv
 
 echo ""
 echo "CSV更新完了"
