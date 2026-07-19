@@ -1261,63 +1261,126 @@ body.modal-open{
     }
   }
   /* ========================================
-   チーム順位（スマホ専用）
+   チーム順位表：スマホ専用
+   順位・チーム固定／残りを横スクロール
 ======================================== */
 @media (max-width: 768px) {
 
-    #teamTable table{
-      width:100%;
-      min-width:0;
-      table-layout:fixed;
+    /* 順位表エリアを画面いっぱいに広げる */
+    .ranking {
+      width: 100%;
+      padding: 20px 4px 40px;
+    }
+  
+    /* 横スクロール領域 */
+    #teamTable {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+    /* 表全体の幅 */
+    #teamTable table {
+      width: 690px;
+      min-width: 690px;
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 0;
     }
   
     #teamTable th,
-    #teamTable td{
-      padding:10px 4px;
-      font-size:13px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+    #teamTable td {
+      height: 58px;
+      padding: 9px 6px;
+      font-size: 13px;
+      white-space: nowrap;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   
-    /* 順位 */
-    #teamTable th:nth-child(1),
-    #teamTable td:nth-child(1){
-      width:60px;
-      text-align:center;
-    }
-  
-    /* チーム（残り全部使う） */
-    #teamTable th:nth-child(2),
-    #teamTable td:nth-child(2){
-      width:auto;
-      text-align:left;
-      padding-left:8px;
-      font-weight:bold;
-    }
-  
-    /* 試合数 */
-    #teamTable th:nth-child(3),
-    #teamTable td:nth-child(3){
-      width:55px;
-    }
-  
-    /* ポイント */
-    #teamTable th:nth-child(4),
-    #teamTable td:nth-child(4){
-      width:70px;
-    }
-  
-    /* 着順 */
-    #teamTable th:nth-child(5),
-    #teamTable td:nth-child(5){
-      width:95px;
-    }
-  
-    /* ポイント差 */
+    /* 以前の「ポイント差を非表示」を解除 */
     #teamTable th:nth-child(6),
-    #teamTable td:nth-child(6){
-      width:65px;
+    #teamTable td:nth-child(6) {
+      display: table-cell !important;
     }
   
+    /* 1列目：順位 */
+    #teamTable th:nth-child(1),
+    #teamTable td:nth-child(1) {
+      position: sticky;
+      left: 0;
+      width: 76px;
+      min-width: 76px;
+      max-width: 76px;
+      z-index: 4;
+    }
+  
+    /* 2列目：チーム */
+    #teamTable th:nth-child(2),
+    #teamTable td:nth-child(2) {
+      position: sticky;
+      left: 76px;
+      width: 190px;
+      min-width: 190px;
+      max-width: 190px;
+      z-index: 4;
+      text-align: left;
+      padding-left: 10px;
+    }
+  
+    /* 固定列の背景 */
+    #teamTable tbody td:nth-child(1),
+    #teamTable tbody td:nth-child(2) {
+      background: #1c1c1c;
+    }
+  
+    /* 固定ヘッダー */
+    #teamTable thead th:nth-child(1),
+    #teamTable thead th:nth-child(2) {
+      background: #d4af37;
+      color: #111;
+      z-index: 6;
+    }
+  
+    /* 固定列とスクロール列の境界線 */
+    #teamTable th:nth-child(2),
+    #teamTable td:nth-child(2) {
+      box-shadow: 5px 0 8px rgba(0, 0, 0, 0.35);
+    }
+  
+    /* 3列目：試合数 */
+    #teamTable th:nth-child(3),
+    #teamTable td:nth-child(3) {
+      width: 68px;
+    }
+  
+    /* 4列目：ポイント */
+    #teamTable th:nth-child(4),
+    #teamTable td:nth-child(4) {
+      width: 82px;
+    }
+  
+    /* 5列目：着順分布 */
+    #teamTable th:nth-child(5),
+    #teamTable td:nth-child(5) {
+      width: 110px;
+    }
+  
+    /* 6列目：ポイント差 */
+    #teamTable th:nth-child(6),
+    #teamTable td:nth-child(6) {
+      width: 90px;
+    }
+  
+    /* チーム名は省略せず表示 */
+    #teamTable td:nth-child(2),
+    #teamTable td:nth-child(2) .team-link {
+      overflow: visible;
+      text-overflow: clip;
+      white-space: nowrap;
+    }
   }
