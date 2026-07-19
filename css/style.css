@@ -1139,40 +1139,6 @@ body.modal-open{
    スマホ表示調整
 ======================================== */
 
-@media (max-width: 768px) {
-
-    header h1 {
-      font-size: 32px;
-      line-height: 1.2;
-      margin-bottom: 12px;
-    }
-  
-    header p {
-      font-size: 15px;
-    }
-  
-  }
-  @media (max-width: 768px) {
-
-    #teamTable {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-  
-    #teamTable table {
-      min-width: 760px;
-      width: 100%;
-      table-layout: auto;
-    }
-  
-    #teamTable th,
-    #teamTable td {
-      white-space: nowrap;
-      padding: 10px 8px;
-      font-size: 14px;
-    }
-  
-  }
   @media (max-width: 768px) {
 
     #teamTable th:nth-child(6),
@@ -1293,4 +1259,65 @@ body.modal-open{
     .ranking-controls #leagueControl select {
       width: 100%;
     }
+  }
+  /* ========================================
+   チーム順位（スマホ専用）
+======================================== */
+@media (max-width: 768px) {
+
+    #teamTable table{
+      width:100%;
+      min-width:0;
+      table-layout:fixed;
+    }
+  
+    #teamTable th,
+    #teamTable td{
+      padding:10px 4px;
+      font-size:13px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+  
+    /* 順位 */
+    #teamTable th:nth-child(1),
+    #teamTable td:nth-child(1){
+      width:60px;
+      text-align:center;
+    }
+  
+    /* チーム（残り全部使う） */
+    #teamTable th:nth-child(2),
+    #teamTable td:nth-child(2){
+      width:auto;
+      text-align:left;
+      padding-left:8px;
+      font-weight:bold;
+    }
+  
+    /* 試合数 */
+    #teamTable th:nth-child(3),
+    #teamTable td:nth-child(3){
+      width:55px;
+    }
+  
+    /* ポイント */
+    #teamTable th:nth-child(4),
+    #teamTable td:nth-child(4){
+      width:70px;
+    }
+  
+    /* 着順 */
+    #teamTable th:nth-child(5),
+    #teamTable td:nth-child(5){
+      width:95px;
+    }
+  
+    /* ポイント差 */
+    #teamTable th:nth-child(6),
+    #teamTable td:nth-child(6){
+      width:65px;
+    }
+  
   }
