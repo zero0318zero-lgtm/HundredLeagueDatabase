@@ -380,6 +380,7 @@ function updateLeagueControl() {
 ======================================== */
 
 function renderAwards() {
+  console.log("yearSelect.value =", yearSelect.value);
   const selectedYear =
     normalizeYear(yearSelect.value);
 
@@ -567,8 +568,16 @@ async function loadAwards() {
     `;
 
     awardsData =
-  await HLDB.loadData("awards");
+      await HLDB.loadData("awards");
 
+    HLDB.populateYearSelect(
+      "yearSelect",
+      awardsData
+    );
+    console.log("populate後", yearSelect.value);
+
+
+    updateLeagueControl();
     renderAwards();
 
   } catch (error) {
@@ -605,5 +614,4 @@ leagueSelect.addEventListener(
    初期表示
 ======================================== */
 
-updateLeagueControl();
 loadAwards();

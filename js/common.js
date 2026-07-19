@@ -424,7 +424,14 @@ HLDB.clearDataCache = function (
     "すべてのデータキャッシュを削除"
   );
 };
+/* ========================================
+   年度表記統一
+======================================== */
 
+HLDB.normalizeYear = function (value) {
+  return String(value || "")
+    .match(/\d{4}/)?.[0] || "";
+};
 
 /* ========================================
    リーグ・ステージ表記統一
@@ -863,3 +870,61 @@ document.addEventListener(
   "DOMContentLoaded",
   HLDB.initializePlayerSearch
 );
+/* ========================================
+   年度選択肢を自動生成
+======================================== */
+
+HLDB.populateYearSelect = function (
+  selectId,
+  data,
+  yearKey = "年度"
+) {
+  const yearSelect =
+    document.getElementById(selectId);
+
+  if (!yearSelect) {
+    return;
+  }
+
+  const currentYear =
+    HLDB.normalizeYear(
+      yearSelect.value
+    );
+
+  const years = [
+    ...new Set(
+      data
+        .map(row =>
+          HLDB.normalizeYear(
+            row[yearKey]
+          )
+        )
+        .filter(Boolean)
+    )
+  ].sort(
+    (a, b) =>
+      Number(b) - Number(a)
+  );
+
+  if (years.length === 0) {
+    yearSelect.innerHTML = `
+      <option value="">
+        年度データなし
+      </option>
+    `;
+
+    return;
+  }
+
+  yearSelect.innerHTML =
+    years.map(year => `
+      <option value="${HLDB.escapeHtml(year)}">
+        ${HLDB.escapeHtml(year)}
+      </option>
+    `).join("");
+
+  yearSelect.value =
+    years.includes(currentYear)
+      ? currentYear
+      : years[0];
+};

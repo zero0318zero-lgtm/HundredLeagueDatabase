@@ -236,35 +236,41 @@ function updateLeagueOptions() {
   
   
   /* CSVを読み込む */
-  async function loadPlayers() {
-    try {
-      playersArea.innerHTML = `
-        <p class="no-data-message">
-          読み込み中...
-        </p>
-      `;
-  
-      playersData = await HLDB.loadData("players");
-  
-      /*
-        初期年度に合わせてリーグ選択肢を整えてから表示
-      */
-      updateLeagueOptions();
-      renderPlayers();
-  
-    } catch (error) {
-      console.error(
-        "選手ランキング読込エラー:",
-        error
-      );
-  
-      playersArea.innerHTML = `
-        <p class="no-data-message">
-          選手ランキングを読み込めませんでした。
-        </p>
-      `;
-    }
+async function loadPlayers() {
+  try {
+    playersArea.innerHTML = `
+      <p class="no-data-message">
+        読み込み中...
+      </p>
+    `;
+
+    playersData = await HLDB.loadData("players");
+
+    // 年度を自動生成（最新年度が先頭）
+    HLDB.populateYearSelect(
+      "yearSelect",
+      playersData
+    );
+
+    // 年度に応じてリーグを切り替え
+    updateLeagueOptions();
+
+    // ランキング表示
+    renderPlayers();
+
+  } catch (error) {
+    console.error(
+      "選手ランキング読込エラー:",
+      error
+    );
+
+    playersArea.innerHTML = `
+      <p class="no-data-message">
+        選手ランキングを読み込めませんでした。
+      </p>
+    `;
   }
+}
   
   
   /* 年度を変更したとき */
