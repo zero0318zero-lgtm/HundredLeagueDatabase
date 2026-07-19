@@ -17,98 +17,6 @@ const awardsSeasonTitle =
 let awardsData = [];
 
 
-/* CSVの1行を分割 */
-function parseCsvLine(line) {
-  const values = [];
-  let current = "";
-  let insideQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const character = line[i];
-    const nextCharacter = line[i + 1];
-
-    if (
-      character === '"' &&
-      insideQuotes &&
-      nextCharacter === '"'
-    ) {
-      current += '"';
-      i++;
-      continue;
-    }
-
-    if (character === '"') {
-      insideQuotes = !insideQuotes;
-      continue;
-    }
-
-    if (character === "," && !insideQuotes) {
-      values.push(current);
-      current = "";
-      continue;
-    }
-
-    current += character;
-  }
-
-  values.push(current);
-  return values;
-}
-
-
-/* CSV全体をデータ化 */
-function parseCsv(text) {
-  const lines = String(text || "")
-    .trim()
-    .split(/\r?\n/)
-    .filter(line => line.trim() !== "");
-
-  if (lines.length === 0) {
-    return [];
-  }
-
-  const headers = parseCsvLine(lines.shift()).map(
-    (header, index) => {
-      const cleaned = header.trim();
-
-      return index === 0
-        ? cleaned.replace(/^\uFEFF/, "")
-        : cleaned;
-    }
-  );
-
-  return lines.map(line => {
-    const values = parseCsvLine(line);
-    const item = {};
-
-    headers.forEach((header, index) => {
-      item[header] = values[index]?.trim() || "";
-    });
-
-    return item;
-  });
-}
-
-
-/* 年度を2025形式に統一 */
-function normalizeYear(value) {
-  const match = String(value || "").match(/\d{4}/);
-
-  return match ? match[0] : "";
-}
-
-
-/* リーグ表記をA/Bに統一 */
-function normalizeLeague(value) {
-  const text = String(value || "").trim();
-
-  if (text.startsWith("A")) return "A";
-  if (text.startsWith("B")) return "B";
-
-  return text;
-}
-
-
 /* 順位を数値化 */
 function normalizeRank(value) {
   const match = String(value || "").match(/\d+/);
@@ -213,44 +121,12 @@ function getRankClass(rank) {
 }
 
 
-/* HTML安全対策 */
-function escapeHtml(value) {
-  return String(value || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-
-/* 数値化 */
-function toNumber(value) {
-  const text = String(value || "")
-    .replace(/,/g, "")
-    .replace(/%/g, "")
-    .replace(/点/g, "")
-    .replace(/pt/gi, "")
-    .replace(/勝/g, "")
-    .trim();
-
-  if (text === "") {
-    return null;
-  }
-
-  const number = Number(text);
-
-  return Number.isFinite(number)
-    ? number
-    : null;
-}
-
 
 /* 部門別の数値表示 */
 function formatAwardValue(row) {
   const category = String(row["部門"] || "").trim();
   const unit = String(row["単位"] || "").trim();
-  const number = toNumber(row["数値"]);
+  const number = HLDB.toNumber(row["数値"]);
 
   if (number === null) {
     return "―";
@@ -281,14 +157,12 @@ function formatAwardValue(row) {
 
 /* 選手ページURL */
 function createPlayerUrl(row) {
-  const query = new URLSearchParams({
+  return HLDB.createPlayerUrl({
     id: row["選手ID"] || "",
-    year: normalizeYear(row["年度"]),
+    year: row["年度"] || "",
     league: row["リーグ"] || "",
     stage: "レギュラー"
   });
-
-  return `player.html?${query.toString()}`;
 }
 
 
@@ -337,7 +211,7 @@ function normalizeAwardLeague(value) {
 
 function updateLeagueControl() {
   const selectedYear =
-    normalizeYear(yearSelect.value);
+  HLDB.normalizeYear(yearSelect.value);
 
   const isSingleLeagueYear =
     selectedYear === "2023" ||
@@ -382,7 +256,7 @@ function updateLeagueControl() {
 function renderAwards() {
   console.log("yearSelect.value =", yearSelect.value);
   const selectedYear =
-    normalizeYear(yearSelect.value);
+  HLDB.normalizeYear(yearSelect.value);
 
   const isSingleLeagueYear =
     selectedYear === "2023" ||
@@ -403,7 +277,7 @@ function renderAwards() {
   const filtered =
     awardsData.filter(row => {
       const rowYear =
-        normalizeYear(
+      HLDB.normalizeYear(
           row["年度"]
         );
 
@@ -489,7 +363,7 @@ function renderAwards() {
               </span>
 
               <h2>
-                ${escapeHtml(
+                ${HLDB.escapeHtml(
                   getDisplayCategory(
                     category
                   )
@@ -524,13 +398,13 @@ function renderAwards() {
                       <div class="award-player-info">
 
                         <strong>
-                          ${escapeHtml(
+                          ${HLDB.escapeHtml(
                             row["選手名"]
                           )}
                         </strong>
 
                         <span>
-                          ${escapeHtml(
+                          ${HLDB.escapeHtml(
                             row["チーム名"]
                           )}
                         </span>

@@ -21,157 +21,6 @@ const teamMatches = document.getElementById("teamMatches");
 
 teamTitle.textContent = teamName || "チーム詳細";
 
-
-/* =========================
-   CSV読み込み
-========================= */
-
-function parseCsvLine(line) {
-  const values = [];
-  let current = "";
-  let insideQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const character = line[i];
-    const nextCharacter = line[i + 1];
-
-    if (character === '"' && insideQuotes && nextCharacter === '"') {
-      current += '"';
-      i++;
-      continue;
-    }
-
-    if (character === '"') {
-      insideQuotes = !insideQuotes;
-      continue;
-    }
-
-    if (character === "," && !insideQuotes) {
-      values.push(current);
-      current = "";
-      continue;
-    }
-
-    current += character;
-  }
-
-  values.push(current);
-
-  return values;
-}
-
-
-function parseCsv(text) {
-  const lines = text
-    .trim()
-    .split(/\r?\n/)
-    .filter(line => line.trim() !== "");
-
-  if (lines.length === 0) {
-    return [];
-  }
-
-  const headers = parseCsvLine(lines.shift()).map(header =>
-    header.trim()
-  );
-
-  return lines.map(line => {
-    const values = parseCsvLine(line);
-    const item = {};
-
-    headers.forEach((header, index) => {
-      item[header] = values[index]?.trim() || "";
-    });
-
-    return item;
-  });
-}
-
-
-/* =========================
-   表記統一
-========================= */
-
-function normalizeLeague(value) {
-  const text = String(value || "").trim();
-
-  if (text.startsWith("A")) return "A";
-  if (text.startsWith("B")) return "B";
-
-  return text;
-}
-
-
-function normalizeStage(value) {
-  const text = String(value || "").trim();
-
-  if (
-    text.includes("Semi") ||
-    text.includes("セミファイナル") ||
-    text.includes("セミ")
-  ) {
-    return "Semi-Final";
-  }
-
-  if (
-    text.includes("Final") ||
-    text.includes("ファイナル")
-  ) {
-    return "Final";
-  }
-
-  return "レギュラー";
-}
-
-
-function displayStageName(value) {
-  const normalized = normalizeStage(value);
-
-  if (normalized === "Semi-Final") {
-    return "セミファイナル";
-  }
-
-  if (normalized === "Final") {
-    return "ファイナル";
-  }
-
-  return "レギュラー";
-}
-
-
-/* =========================
-   表示用
-========================= */
-
-function formatDecimal(value, digits = 1) {
-  const number = Number(
-    String(value || "")
-      .replace(/,/g, "")
-      .replace(/pt/gi, "")
-      .trim()
-  );
-
-  if (!Number.isFinite(number)) {
-    return "―";
-  }
-
-  return number.toFixed(digits);
-}
-
-
-function formatPlacement(value) {
-  const text = String(value || "").trim();
-
-  if (text === "") {
-    return "―";
-  }
-
-  return text.endsWith("着")
-    ? text
-    : `${text}着`;
-}
-
-
 /* =========================
    データ読み込み
 ========================= */
@@ -191,8 +40,8 @@ async function loadTeamDetail() {
     const selectedTeam = teamsData.find(row =>
       row["チーム"] === teamName &&
       row["年度"] === year &&
-      normalizeLeague(row["リーグ"]) === normalizeLeague(league) &&
-      normalizeStage(row["ステージ"]) === normalizeStage(stage)
+      HLDB.normalizeLeague(row["リーグ"]) === HLDB.normalizeLeague(league) &&
+      HLDB.normalizeStage(row["ステージ"]) === HLDB.normalizeStage(stage)
     );
 
     if (!selectedTeam) {
@@ -232,10 +81,10 @@ async function loadTeamDetail() {
 ========================= */
 
 function renderTeamInfo(team) {
-  const point = formatDecimal(team["ポイント"]);
+  const point = HLDB.formatDecimal(team["ポイント"]);
 
   const pointDiff = team["ポイント差"]
-    ? formatDecimal(team["ポイント差"])
+    ? HLDB.formatDecimal(team["ポイント差"])
     : "―";
 
   teamTitle.textContent = team["チーム"] || teamName;
@@ -245,10 +94,10 @@ function renderTeamInfo(team) {
 
       <p>
         ${team["年度"]}年・
-        ${normalizeLeague(team["リーグ"])}リーグ
+        ${HLDB.normalizeLeague(team["リーグ"])}リーグ
       </p>
 
-      <p>${displayStageName(team["ステージ"])}</p>
+      <p>${HLDB.displayStageName(team["ステージ"])}</p>
 
       <div class="team-stats">
 
@@ -297,8 +146,8 @@ function renderTeamPlayers(playersData) {
     .filter(row =>
       row["年度"] === year &&
       row["チーム名"] === teamName &&
-      normalizeLeague(row["リーグ"]) === normalizeLeague(league) &&
-      normalizeStage(row["ステージ"]) === normalizeStage(stage)
+      HLDB.normalizeLeague(row["リーグ"]) === HLDB.normalizeLeague(league) &&
+      HLDB.normalizeStage(row["ステージ"]) === HLDB.normalizeStage(stage)
     )
     .sort((a, b) =>
       Number(a["順位"] || 9999) -
@@ -316,11 +165,12 @@ function renderTeamPlayers(playersData) {
     <div class="player-list">
 
       ${selectedPlayers.map(player => {
-        const playerUrl =
-        `player.html?id=${encodeURIComponent(player["選手ID"])}`
-        + `&year=${encodeURIComponent(player["年度"])}`
-        + `&league=${encodeURIComponent(player["リーグ"])}`
-        + `&stage=${encodeURIComponent(player["ステージ"])}`;
+        const playerUrl = HLDB.createPlayerUrl({
+          id: player["選手ID"],
+          year: player["年度"],
+          league: player["リーグ"],
+          stage: player["ステージ"]
+        });
 
         return `
           <a class="player-card" href="${playerUrl}">
@@ -331,7 +181,7 @@ function renderTeamPlayers(playersData) {
 
             <div class="player-card-stats">
               <span>${player["順位"]}位</span>
-              <span>${formatDecimal(player["ポイント"])} pt</span>
+              <span>${HLDB.formatDecimal(player["ポイント"])} pt</span>
               <span>${player["試合数"]}試合</span>
             </div>
 
@@ -352,8 +202,8 @@ function renderTeamMatches(matchesData) {
   const selectedMatches = matchesData.filter(row =>
     row["年度"] === year &&
     row["チーム名"] === teamName &&
-    normalizeLeague(row["リーグ"]) === normalizeLeague(league) &&
-    normalizeStage(row["ステージ"]) === normalizeStage(stage)
+    HLDB.normalizeLeague(row["リーグ"]) === HLDB.normalizeLeague(league) &&
+    HLDB.normalizeStage(row["ステージ"]) === HLDB.normalizeStage(stage)
   );
 
   if (selectedMatches.length === 0) {
@@ -386,20 +236,25 @@ function renderTeamMatches(matchesData) {
 
               <td>
                 <a
-                  class="team-link"
-                  href="player.html?player=${encodeURIComponent(match["選手ID"])}&year=${encodeURIComponent(year)}&league=${encodeURIComponent(league)}&stage=${encodeURIComponent(stage)}"
-                >
-                  ${match["選手名"] || "―"}
-                </a>
+  class="team-link"
+  href="${HLDB.createPlayerUrl({
+    id: match["選手ID"],
+    year,
+    league,
+    stage
+  })}"
+>
+  ${match["選手名"] || "―"}
+</a>
               </td>
 
               <td>
-                ${formatPlacement(match["着順"])}
+                ${HLDB.formatPlacement(match["着順"])}
               </td>
 
               <td>
                 ${match["スコア"] !== ""
-                  ? `${formatDecimal(match["スコア"])} pt`
+                  ? `${HLDB.formatDecimal(match["スコア"])} pt`
                   : "―"}
               </td>
 
