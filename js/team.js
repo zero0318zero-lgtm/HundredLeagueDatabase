@@ -10,7 +10,7 @@ const PLAYERS_CSV_URL =
 const params = new URLSearchParams(window.location.search);
 
 const teamName = params.get("team") || "";
-const year = params.get("year") || "2025";
+const year = params.get("year") || "";
 const league = params.get("league") || "";
 const stage = params.get("stage") || "";
 
@@ -317,10 +317,10 @@ function renderTeamPlayers(playersData) {
 
       ${selectedPlayers.map(player => {
         const playerUrl =
-          `player.html?player=${encodeURIComponent(player["選手名"])}`
-          + `&year=${encodeURIComponent(player["年度"])}`
-          + `&league=${encodeURIComponent(player["リーグ"])}`
-          + `&stage=${encodeURIComponent(player["ステージ"])}`;
+        `player.html?id=${encodeURIComponent(player["選手ID"])}`
+        + `&year=${encodeURIComponent(player["年度"])}`
+        + `&league=${encodeURIComponent(player["リーグ"])}`
+        + `&stage=${encodeURIComponent(player["ステージ"])}`;
 
         return `
           <a class="player-card" href="${playerUrl}">
@@ -387,7 +387,7 @@ function renderTeamMatches(matchesData) {
               <td>
                 <a
                   class="team-link"
-                  href="player.html?player=${encodeURIComponent(match["選手名"])}&year=${encodeURIComponent(year)}&league=${encodeURIComponent(league)}&stage=${encodeURIComponent(stage)}"
+                  href="player.html?player=${encodeURIComponent(match["選手ID"])}&year=${encodeURIComponent(year)}&league=${encodeURIComponent(league)}&stage=${encodeURIComponent(stage)}"
                 >
                   ${match["選手名"] || "―"}
                 </a>

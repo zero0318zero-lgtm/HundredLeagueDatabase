@@ -420,12 +420,14 @@ async function loadTeams() {
     teamsData =
   await HLDB.loadData("teams");
 
-    console.log(
-      "Teamsデータ件数:",
-      teamsData.length
-    );
+console.log(
+  "Teamsデータ件数:",
+  teamsData.length
+);
 
-    renderTeams();
+initializeYearSelect();
+updateLeagueControl();
+renderTeams();
 
   } catch (error) {
     console.error(
@@ -778,6 +780,39 @@ async function renderFavoritePlayers() {
   }
 }
 
+/* ========================================
+   年度選択肢を自動生成
+======================================== */
+
+function initializeYearSelect() {
+  const yearSelect =
+    document.getElementById("yearSelect");
+
+  if (!yearSelect) return;
+
+  const current =
+    yearSelect.value;
+
+  const years = [
+    ...new Set(
+      teamsData
+        .map(row => normalizeYearValue(row["年度"]))
+        .filter(Boolean)
+    )
+  ].sort((a, b) => Number(b) - Number(a));
+
+  yearSelect.innerHTML =
+    years.map(year => `
+      <option value="${year}">
+        ${year}
+      </option>
+    `).join("");
+
+  yearSelect.value =
+    years.includes(current)
+      ? current
+      : years[0];
+}
 
 /* ========================================
    イベント登録
@@ -816,8 +851,6 @@ function initializeHome() {
     "change",
     renderTeams
   );
-
-  updateLeagueControl();
 
   loadTeams();
   renderFavoritePlayers();
