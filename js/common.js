@@ -928,3 +928,104 @@ HLDB.populateYearSelect = function (
       ? currentYear
       : years[0];
 };
+/* ========================================
+   共通：スマホ下部ナビ
+======================================== */
+
+function createBottomNavigation() {
+  // 二重表示を防止
+  if (document.querySelector(".bottom-nav")) {
+    return;
+  }
+
+  const currentPage =
+    window.location.pathname.split("/").pop() || "index.html";
+
+  const bottomNav = document.createElement("nav");
+  bottomNav.className = "bottom-nav";
+  bottomNav.setAttribute("aria-label", "メインナビゲーション");
+
+  bottomNav.innerHTML = `
+    <a
+      href="index.html"
+      class="bottom-nav-item"
+      data-page="home"
+    >
+      <span class="bottom-nav-icon">🏠</span>
+      <span class="bottom-nav-label">HOME</span>
+    </a>
+
+    <a
+      href="index.html#teamRanking"
+      class="bottom-nav-item"
+      data-page="team"
+    >
+      <span class="bottom-nav-icon">📊</span>
+      <span class="bottom-nav-label">チーム</span>
+    </a>
+
+    <a
+      href="players.html"
+      class="bottom-nav-item"
+      data-page="players"
+    >
+      <span class="bottom-nav-icon">👤</span>
+      <span class="bottom-nav-label">選手</span>
+    </a>
+
+    <a
+      href="awards.html"
+      class="bottom-nav-item"
+      data-page="awards"
+    >
+      <span class="bottom-nav-icon">🏆</span>
+      <span class="bottom-nav-label">個人賞</span>
+    </a>
+
+    <a
+      href="news.html"
+      class="bottom-nav-item"
+      data-page="news"
+    >
+      <span class="bottom-nav-icon">📢</span>
+      <span class="bottom-nav-label">お知らせ</span>
+    </a>
+  `;
+
+  document.body.appendChild(bottomNav);
+
+  // 現在開いているページを金色にする
+  let activePage = "";
+
+  if (
+    currentPage === "index.html" ||
+    currentPage === ""
+  ) {
+    activePage =
+      window.location.hash === "#teamRanking"
+        ? "team"
+        : "home";
+  } else if (
+    currentPage === "players.html" ||
+    currentPage === "player.html"
+  ) {
+    activePage = "players";
+  } else if (currentPage === "awards.html") {
+    activePage = "awards";
+  } else if (currentPage === "news.html") {
+    activePage = "news";
+  }
+
+  const activeItem = bottomNav.querySelector(
+    `[data-page="${activePage}"]`
+  );
+
+  if (activeItem) {
+    activeItem.classList.add("is-active");
+    activeItem.setAttribute("aria-current", "page");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  createBottomNavigation();
+});
