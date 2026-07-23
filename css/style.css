@@ -2625,3 +2625,9 @@ select {
   width: 18px;
   height: 18px;
 }
+.team-subtitle{
+    margin-top:8px;
+    color:#bdbdbd;
+    font-size:15px;
+    letter-spacing:.08em;
+}
